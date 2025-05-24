@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Doctor Consultation</title>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
+  <style>
+    body { 
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      display: flex;
+      min-height: 100vh;
+    }
+    .main-container { display: flex; flex: 1; }
+    .left-section { flex: 2; padding: 30px; }
+    .right-section {
+      flex: 1;
+      background-color: #fff;
+      padding: 30px;
+      box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    h2, h3 { text-align: center; color: #2c3e50; }
+    form {
+      background: #fff;
+      max-width: 500px;
+      margin: 20px auto;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    label { display: block; margin-bottom: 12px; color: #34495e; }
+    input, textarea {
+      width: 100%; padding: 10px;
+      border: 1px solid #ccc; border-radius: 6px;
+      font-size: 16px; box-sizing: border-box;
+    }
+    button {
+      background-color: #3498db; color: #fff;
+      border: none; padding: 12px; width: 100%;
+      border-radius: 8px; font-size: 16px; cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover { background-color: #2980b9; }
+    ul {
+      max-width: 500px;
+      margin: 30px auto;
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background: #fff; padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    #otpMessage { color: green; margin-top: 10px; }
+    #otp { margin-top: 10px; }
+
+    .close-btn {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #c0392b;
+      cursor: pointer;
+    }
+
+    #medicineSuggestions {
+      max-width: 500px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    #medicineSuggestions h3 {
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="main-container">
+
+  <!-- Left: Consultation Form -->
+  <div class="left-section">
+    <h2>Consult a Doctor</h2>
+    <form id="consultationForm">
+      <label>
+        Name:
+        <input type="text" name="name" required />
+      </label><br><br>
+      <label>
+        Symptoms:
+        <textarea name="symptoms" required></textarea>
+      </label><br><br>
+      <button type="submit">Submit</button>
+    </form>
+
+    <div id="medicineSuggestions" style="display:none;">
+      <h3>Medicine Suggestions</h3>
+      <ul id="medicineList"></ul>
+    </div>
+
+    <h3>Previous Consultations</h3>
+    <button id="goBackBtn" style="
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-bottom: 15px;
+    ">
+      ← Go Back
+    </button>
+    <ul id="consultationList"></ul>
+  </div>
+
+  <!-- Right: OTP Section -->
+  <div class="right-section">
+    <span class="close-btn" onclick="closeOTPSection()">×</span>
+    <h2>Verify Phone</h2>
+    <form id="otpForm">
+      <label>
+        Phone Number:
+        <input type="tel" id="phone" placeholder="e.g., 9876543210" required pattern="[0-9]{10}" />
+      </label>
+      <button type="button" onclick="sendOTP()">Send OTP</button>
+
+      <input type="text" id="otp" placeholder="Enter OTP" style="display:none;" />
+      <button type="button" style="display:none;">Verify OTP</button>
+
+      <p id="otpMessage"></p>
+      <div id="recaptcha-container"></div>
+    </form>
+  </div>
+
+</div>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCczEgMTAs8b_L6kUhP8ewcE0X9iavHt8M",
+    authDomain: "medikart-3c1e7.firebaseapp.com",
+    projectId: "medikart-3c1e7",
+    appId: "1:686822297138:web:1cfcddb31e86411270f62b",
+    messagingSenderId: "686822297138",
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  let recaptchaInitialized = false;
+
+  function setupReCAPTCHA() {
+    if (!recaptchaInitialized) {
+      window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+        size: 'invisible',
+        callback: (response) => {
+          console.log('✅ reCAPTCHA solved:', response);
+        }
+      });
+      recaptchaVerifier.render().then(widgetId => {
+        window.recaptchaWidgetId = widgetId;
+      });
+      recaptchaInitialized = true;
+    }
+  }
+
+  function sendOTP() {
+    const phoneInput = document.getElementById("phone").value.trim();
+    const phone = "+91" + phoneInput;
+
+    if (!phoneInput.match(/^[0-9]{10}$/)) {
+      document.getElementById("otpMessage").textContent = "❌ Enter a valid 10-digit phone number.";
+      return;
+    }
+
+    setupReCAPTCHA();
+
+    firebase.auth().signInWithPhoneNumber(phone, window.recaptchaVerifier)
+      .then((confirmationResult) => {
+        window.confirmationResult = confirmationResult;
+        document.getElementById("otpMessage").textContent = "✅ OTP sent successfully!";
+        document.getElementById("otp").style.display = "block";
+        document.querySelector('#otpForm button:nth-of-type(2)').style.display = "block";
+      })
+      .catch((error) => {
+        document.getElementById("otpMessage").textContent = "❌ Failed to send OTP: " + error.message;
+        console.error("❌ OTP Error:", error);
+      });
+  }
+
+  // Consultation Form Submit
+  document.getElementById('consultationForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const name = document.querySelector('input[name="name"]').value.trim();
+    const symptoms = document.querySelector('textarea[name="symptoms"]').value.trim();
+
+    if (!name || !symptoms) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/api/consultation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, symptoms })
+      });
+
+      const data = await response.json();
+      if (data.message) alert(data.message);
+
+      const list = document.getElementById('medicineList');
+      list.innerHTML = '';
+
+      if (data.medicines && data.medicines.length > 0) {
+        data.medicines.forEach(med => {
+          const li = document.createElement('li');
+          li.innerHTML = `<strong>${med.name}</strong> — Dosage: ${med.dosage || 'Not specified'}`;
+          list.appendChild(li);
+        });
+        document.getElementById('medicineSuggestions').style.display = 'block';
+      } else {
+        document.getElementById('medicineSuggestions').style.display = 'none';
+      }
+
+      document.getElementById('consultationForm').reset();
+    } catch (error) {
+      alert("Error submitting consultation. Try again.");
+      console.error(error);
+    }
+  });
+
+  async function loadConsultations() {
+    try {
+      const response = await fetch('http://localhost:5000/api/consultations');
+      const data = await response.json();
+      const list = document.getElementById('consultationList');
+      list.innerHTML = '';
+      data.forEach(c => {
+        const li = document.createElement('li');
+        li.textContent = `Name: ${c.name} | Symptoms: ${c.symptoms} | Date: ${new Date(c.date).toLocaleString()}`;
+        list.appendChild(li);
+      });
+    } catch (error) {
+      console.error("Error loading consultations:", error);
+    }
+  }
+
+  loadConsultations();
+
+  document.getElementById('goBackBtn').addEventListener('click', () => {
+    document.getElementById('medicineSuggestions').style.display = 'none';
+    loadConsultations();
+  });
+
+  document.querySelector('#otpForm button:nth-of-type(2)').addEventListener('click', () => {
+    const otp = document.getElementById('otp').value.trim();
+    if (!otp) {
+      alert("Please enter OTP");
+      return;
+    }
+    window.confirmationResult.confirm(otp)
+      .then(result => {
+        document.getElementById('otpMessage').textContent = "✅ Phone number verified!";
+      })
+      .catch(error => {
+        document.getElementById('otpMessage').textContent = "❌ Invalid OTP.";
+        console.error(error);
+      });
+  });
+
+  function closeOTPSection() {
+    document.querySelector('.right-section').style.display = 'none';
+  }
+
+
+</script>
+
+</body>
+</html>

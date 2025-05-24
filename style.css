@@ -1,0 +1,477 @@
+
+.navbar-brand img {
+    height: 70px;
+}
+
+.hero-section {
+    background: url('https://via.placeholder.com/1500x500') center/cover no-repeat;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.hero-section h1 {
+    font-size: 3rem;
+}
+
+.unique-feature {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+footer {
+    background-color: #343a40;
+    color: white;
+    padding: 1.5rem 0;
+}
+
+footer a {
+    color: #ffc107;
+}
+
+  /* Prevent shrinking, maintain width */
+  /*.product-card img {
+    height: 75%;
+    object-fit: cover;
+    
+
+}
+
+.product-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 220px;
+  max-height: 200px;    
+  margin: auto;
+  padding: 10px;
+  margin-right: 6px;
+  margin-left: 1px;
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  background-color: white; 
+  background-color: white !important; /* Force white background */
+
+
+
+
+
+
+
+/*.product-card:hover {
+
+    transform: scale(1.05);
+}
+
+.product-row {
+    display: flex;
+    overflow-x: auto;
+    gap: 80px;
+    padding-bottom: 10px;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    overflow-x: auto;
+    flex-direction: row;
+    overflow-y: hidden;
+    white-space: nowrap;
+    flex-wrap: nowrap;      
+
+  }
+  
+  .product-row::-webkit-scrollbar {
+    height: 8px;
+  }
+  
+  .product-row::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+  */
+
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+*
+{
+    font-family: 'poppins' , sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    text-decoration: none;
+    border: none;
+    text-transform: capitalize;
+    transition: all .2s linear;
+}
+.carousel-item img {
+    height: 270px;
+    width: 25;
+    object-fit: cover;
+}
+.carousel-item {
+    position: relative;
+  }
+
+
+
+.carousel-caption p {
+    font-size: 1.25rem;
+}
+.carousel-inner img {
+    width: 100%;         /* Image width will be 100% of the container */
+    height: 400px;       /* Adjust the height as needed */
+    object-fit: cover;   /* Ensure the image covers the space without distortion */
+    transform: scale(0.8);  /* Shrinks the image to 80% of its original size */
+    transform-origin: center;  /* Ensures the image is scaled from the center */
+  }
+
+  .carousel-caption {
+    position: absolute;
+    top: 70%;            /* Center vertically */
+    left: 50%;           /* Center horizontally */
+    transform: translate(-50%, -50%); /* Offset by 50% of its own width/height */
+    color:whitesmoke;        /* Text color */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Shadow for readability */
+    text-align: center;  /* Center the text */
+  }
+  
+  .carousel-caption h5 {
+    font-size: 2rem;     /* Customize the heading font size */
+    font-weight: bold;   /* Optional: Make the heading bold */
+  }
+  
+  .carousel-caption p {
+    font-size: 1.25rem;  /* Customize the paragraph font size */
+  }
+
+
+
+
+  :root {
+    --primary-color: #3797f7;
+    --secondary-color: #6c757d;
+    --gradient: linear-gradient(to right, #d8dde3, #6c757d);
+}
+
+.navbar-brand img {
+    height: 50px;
+}
+
+.hero-section {
+    background: url('https://via.placeholder.com/1500x500') center/cover no-repeat, var(--gradient);
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.hero-section h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.gradient-text {
+    background: var(--gradient);
+    
+    -webkit-text-fill-color: transparent;
+}
+
+.unique-feature {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+footer a {
+    color: var(--primary-color);
+}
+
+
+
+.product-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        height: 300px;
+    }
+
+    .hero-section h1 {
+        font-size: 1.8rem;
+    }
+
+    .carousel-inner img {
+        height: 200px;
+    }
+}
+
+.carousel-item img {
+    object-fit: cover;
+}
+
+.carousel-caption {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgb(1, 36, 59);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.carousel-caption h5 {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.carousel-caption p {
+    font-size: 1rem;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    text-decoration: none;
+    border: none;
+    text-transform: capitalize;
+    transition: all 0.2s linear;
+}
+.search-bar-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30%;
+    z-index: 10;
+}
+
+.input-group {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.input-group .form-control {
+    border: none;
+    padding: 1rem;
+}
+
+.input-group .btn {
+    background: var(--primary-color);
+    border: none;
+    padding: 0.75rem 1.5rem;
+}
+
+.input-group .btn:hover {
+    background: darken(var(--primary-color), 10%);
+}
+
+
+/* Secondary Navbar Styling */
+.navbar-dark.bg-primary {
+    background-color:rgb(160, 158, 158)!important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 1rem;
+}
+
+.navbar-dark .nav-link {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #ffffff !important;
+    padding: 0rem 0rem;
+    letter-spacing: 0.01rem;
+    transition: color 0.3s, background-color 0.3s;
+    border-radius: 3px;
+}
+
+.navbar-dark .nav-link:hover {
+    color: #ffffff !important;
+    background-color: var(--primary-color); 
+}
+
+.navbar-dark .nav-link.active {
+    background-color:var(--primary-color); 
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+/* Center the secondary navbar items */
+.navbar-dark .navbar-nav {
+    gap: 7.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar-dark.bg-primary {
+        padding: 1rem;
+    }
+
+    .navbar-dark .nav-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+        letter-spacing: 0.08rem;
+    }
+}
+
+
+/* Navbar Call Us Button */
+.navbar .nav-item .btn-outline-success {
+    border-color: #28a745;  /* Green outline */
+    color: #28a745;  /* Green text */
+    padding: 8px 16px;
+    transition: all 0.3s ease-in-out;
+    border-radius: 8px; /* Rounded corners */
+}
+
+.navbar .nav-item .btn-outline-success:hover {
+    background-color: #28a745; /* Green background */
+    color: white;
+}
+
+/* Navbar Login/Signup Button */
+.navbar .nav-item .btn-primary {
+    background-color: #007bff; /* Primary blue */
+    border-color: #007bff;
+    padding: 8px 16px;
+    transition: all 0.3s ease-in-out;
+    border-radius: 8px; /* Rounded corners */
+}
+
+.navbar .nav-item .btn-primary:hover {
+    background-color: #0056b3; /* Darker blue */
+    border-color: #0056b3;
+}
+
+/* Icon Styling */
+.navbar .nav-item .btn i {
+    margin-right: 5px;
+}
+
+.upload-btn {
+    display: flex;
+    align-items: center;
+    padding: 7px 10px; /* Further reduced padding */
+    font-size: 12.5px; /* Smaller font size */
+    border-radius: 5px; /* Slightly smaller border radius */
+    text-align: center;
+    max-width: 150px;
+    text-decoration: var(--secondary-color);
+    color: rgb(234, 236, 236);
+    background-color: rgb(50, 95, 246);
+    
+    
+
+}
+
+.button-container {
+    display: flex;
+    justify-content: center; /* Centers the button horizontally */
+    align-items: center; /* Centers the button vertically (if needed) */
+    height: 10vh; /* Ensures full viewport height for vertical centering */
+}
+
+#order-medicine {
+    background: url('image/background.jpg') no-repeat center center/cover;
+    padding: 60px 0; /* Adds spacing around the section */
+    border-radius: 100px; /* Soft rounded corners */
+    top: 60px;
+    margin-top: 0px !important;
+    padding-top: 20px;
+    
+}
+
+/* Small Prescription Image in the Corner */
+.prescription-icon {
+    position: absolute;
+    margin-top: auto;
+    right: 10px;
+    width: 200px; /* Adjust size as needed */
+    opacity: 0.3; /* Slight transparency */
+}
+
+/* Card Styling */
+
+
+
+.prescription-icon {
+    margin-top: auto; /* Pushes the image to the bottom */
+}
+
+.product-slider {
+    display: flex;
+    overflow-x: auto;
+    gap: 1.5rem;
+    padding-bottom: 1rem;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 1rem;
+}
+
+
+
+.product-box .card-img-top {
+    height: 200px; /* limit image height */
+    object-fit: cover; /* ensure image fills space nicely */
+}
+
+.product-box .card-body {
+    padding: 10px;
+    font-size: 14px; /* smaller font */
+}
+
+.product-box .card-title {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+
+
+.product-box {
+    scroll-snap-align: start;
+    flex: 0 0 auto;
+    background-color: transparent; /* removes any extra background */
+
+}
+
+.card-img-top.object-fit-cover {
+    object-fit: cover;
+    width: 100%;
+}
+
+
+.search-container {
+  position: relative;
+}
+
+#searchResults {
+  position: absolute;
+  top: 100%; /* Show just below the input */
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-top: none;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payment</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <style>
+    .flex-container {
+      display: flex;
+      justify-content: space-between;
+    }
+    #summary-box {
+      width: 40%;
+    }
+    #payment-details {
+      width: 55%;
+    }
+  </style>
+</head>
+<body class="container mt-5">
+  <h2>Payment Page</h2>
+  <div class="flex-container mt-4">
+    <div id="payment-details" class="p-4 border rounded"></div>
+    <div id="summary-box" class="p-4 border rounded bg-light d-none"></div>
+  </div>
+
+  
+    <script>
+  const params = new URLSearchParams(window.location.search);
+    const name = params.get("name");
+    const price = parseFloat(params.get("price")) || 0;
+
+    const detailsDiv = document.getElementById("payment-details");
+    const summaryBox = document.getElementById("summary-box");
+
+    if (name && price) {
+      detailsDiv.innerHTML = `
+        <h4>Medicine: ${decodeURIComponent(name)}</h4>
+        <p>Price: ₹${price.toFixed(2)}</p>
+
+        <!-- Address Selection Section -->
+        <h5 class="mt-4">Choose Address</h5>
+        <select id="addressDropdown" class="form-select mb-2">
+          <option value="">-- Select an address --</option>
+        </select>
+
+        <input type="text" id="newAddress" class="form-control mb-2" placeholder="Enter new address" />
+        <input type="text" id="newPincode" class="form-control mb-2" placeholder="Enter pincode" />
+        <button class="btn btn-outline-primary mb-3" onclick="addAddress()">Add Address</button>
+
+        <button id="payBtn" class="btn btn-success">Proceed to Pay</button>
+      `;
+
+      // Fetch addresses and populate dropdown
+      async function fetchAddresses() {
+        try {
+          const res = await fetch('http://localhost:5000/api/addresses/1'); // Replace 1 with dynamic user ID if needed
+          const addresses = await res.json();
+
+          const dropdown = document.getElementById("addressDropdown");
+          dropdown.innerHTML = '<option value="">-- Select an address --</option>'; // Reset
+          addresses.forEach(addr => {
+            const option = document.createElement("option");
+            option.value = addr.address;
+            option.textContent = `${addr.address} (${addr.pincode})`;
+            dropdown.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Failed to fetch addresses", error);
+        }
+      }
+
+      // Add new address
+      async function addAddress() {
+        const address = document.getElementById("newAddress").value.trim();
+        const pincode = document.getElementById("newPincode").value.trim();
+
+        if (!address || !pincode) {
+          alert("Please enter both address and pincode.");
+          return;
+        }
+
+        try {
+          const res = await fetch('http://localhost:5000/api/addresses/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              user_id: 1, // Use real user ID here
+              address,
+              pincode
+            })
+          });
+
+          const result = await res.json();
+          alert("Address added!");
+          document.getElementById("newAddress").value = '';
+          document.getElementById("newPincode").value = '';
+          fetchAddresses();
+        } catch (err) {
+          console.error("Add address error", err);
+          alert("Failed to add address.");
+        }
+      }
+
+      // Make addAddress function globally accessible
+      window.addAddress = addAddress;
+
+      // Initial fetch of addresses
+      fetchAddresses();
+
+      // Proceed to pay button click
+      document.getElementById("payBtn").addEventListener("click", () => {
+        const gst = price * 0.18;
+        const delivery = 40;
+        const total = price + gst + delivery;
+
+        summaryBox.classList.remove("d-none");
+        summaryBox.innerHTML = `
+          <h5>Order Summary</h5>
+          <p>Medicine Price: ₹${price.toFixed(2)}</p>
+          <p>GST (18%): ₹${gst.toFixed(2)}</p>
+          <p>Delivery Charge: ₹${delivery.toFixed(2)}</p>
+          <hr>
+          <h6>Total: ₹${total.toFixed(2)}</h6>
+
+          <h5 class="mt-4">Choose Payment Method</h5>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="paymentMethod" id="upi" value="UPI" checked />
+            <label class="form-check-label" for="upi">UPI</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="Cash on Delivery" />
+            <label class="form-check-label" for="cod">Cash on Delivery</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="paymentMethod" id="card" value="Card" />
+            <label class="form-check-label" for="card">Card</label>
+          </div>
+
+          <!-- Container to show dynamic payment UI -->
+          <div id="paymentDetailsContainer" class="mt-3"></div>
+
+          <button class="btn btn-primary mt-3" id="confirmPaymentBtn">Confirm Payment</button>
+        `;
+
+        function updatePaymentUI() {
+          const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+          const container = document.getElementById("paymentDetailsContainer");
+
+          if (selectedMethod === "UPI") {
+            container.innerHTML = `
+              <h5>Scan QR Code to Pay</h5>
+              <img src="https://api.qrserver.com/v1/create-qr-code/?data=upi://pay&size=180x180" alt="QR Code" />
+              <p class="mt-2 text-success">Please scan the code using any UPI app to pay ₹${total.toFixed(2)}.</p>
+            `;
+          } else if (selectedMethod === "Card") {
+            container.innerHTML = `
+              <h5>Enter Card Details</h5>
+              <input class="form-control mb-2" type="text" placeholder="Card Number" />
+              <input class="form-control mb-2" type="text" placeholder="Expiry Date (MM/YY)" />
+              <input class="form-control mb-2" type="password" placeholder="CVV" />
+              <button class="btn btn-success mt-2">Submit Payment</button>
+            `;
+          } else if (selectedMethod === "Cash on Delivery") {
+            container.innerHTML = `
+              <h4 class="text-success">✅ Thank you! Your order will be delivered soon with Cash on Delivery.</h4>
+            `;
+          }
+        }
+
+        // Initial UI update
+        updatePaymentUI();
+
+        // Attach event listeners for payment method change
+        const radios = document.querySelectorAll('input[name="paymentMethod"]');
+        radios.forEach(radio => {
+          radio.addEventListener('change', updatePaymentUI);
+        });
+
+        // Confirm payment handler
+        document.getElementById("confirmPaymentBtn").addEventListener("click", confirmPayment);
+      });
+
+      // Confirm payment function
+      function confirmPayment() {
+        const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+        const gst = price * 0.18;
+        const delivery = 40;
+        const total = price + gst + delivery;
+
+        const data = {
+          medicine: decodeURIComponent(name),
+          base_price: price,
+          gst: gst,
+          delivery: delivery,
+          total: total,
+          payment_method: selectedMethod
+        };
+
+        fetch("http://localhost:5000/api/order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        })
+          .then(response => response.json())
+          .then(responseData => {
+            // You can handle response here (optional)
+            alert("Order placed successfully!");
+          })
+          .catch(err => {
+            alert("❌ Error: " + err.message);
+          });
+      }
+    } else {
+      detailsDiv.innerHTML = "<p>Invalid request.</p>";
+    }
+</script>
+
+  
+</body>
+</html>
